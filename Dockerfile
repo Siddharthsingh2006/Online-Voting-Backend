@@ -1,14 +1,20 @@
 # Use Java 17
 FROM eclipse-temurin:17-jdk-alpine
 
-# Set working directory
+# Install Maven
+RUN apk update && apk add maven
+
+# Set Work Directory
 WORKDIR /app
 
-# Copy entire project
+# Copy everything
 COPY . .
 
-# If you have mvnw, use it, otherwise use Maven
+# Give execution permission to mvnw (important!)
+RUN chmod +x mvnw || true
+
+# Build the Spring Boot project
 RUN ./mvnw clean package -DskipTests || mvn clean package -DskipTests
 
-# Run jar (auto-detect the jar name)
+# Run the generated jar file
 CMD ["sh", "-c", "java -jar target/*.jar"]
